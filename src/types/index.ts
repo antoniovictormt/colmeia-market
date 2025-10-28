@@ -61,7 +61,6 @@ export interface CreditCardFormProps {
     cardCvv: string
     setCardCvv: Dispatch<SetStateAction<string>>
     formatCardNumber: (value: string) => string
-    formatExpiry: (value: string) => string
     products: CartItem[]
 }
 
@@ -72,6 +71,7 @@ export type PaymentStatus =
     | "failed"
     | "expired"
     | "pending"
+
 export type PaymentMethod = "pix" | "credit-card" | "boleto"
 
 export interface PaymentData {

@@ -1,19 +1,20 @@
 "use client"
 
-import { ShoppingCart, Search, User, Moon, Sun } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Moon, Search, ShoppingCart, Sun, User } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
+import { useState } from "react"
+
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { useTheme } from "next-themes"
-import { useState } from "react"
+import { Input } from "@/components/ui/input"
 import { HeaderProps } from "@/types"
 
 export const Header = ({ email, name, count }: HeaderProps) => {

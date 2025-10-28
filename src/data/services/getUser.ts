@@ -1,8 +1,9 @@
 "use server"
 
-import { SessionData } from "@/types"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+
+import { SessionData } from "@/types"
 
 function decode(sessionString: string): SessionData {
     return JSON.parse(sessionString) as SessionData

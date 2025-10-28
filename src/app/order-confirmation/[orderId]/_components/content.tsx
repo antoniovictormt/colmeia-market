@@ -1,7 +1,17 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import {
+    CheckCircle,
+    Clock,
+    CreditCard,
+    Home,
+    Package,
+    Truck
+} from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -10,15 +20,6 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-    CheckCircle,
-    Package,
-    Truck,
-    Home,
-    Clock,
-    CreditCard
-} from "lucide-react"
 import {
     OrderConfirmationPageProps,
     PaymentMethod,

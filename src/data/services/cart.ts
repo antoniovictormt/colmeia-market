@@ -1,7 +1,8 @@
 "use client"
 
+import { useCallback, useEffect, useState } from "react"
+
 import { CartItem, Product } from "@/types"
-import { useState, useEffect, useCallback } from "react"
 
 function getCartFromCookies(): CartItem[] {
     if (typeof document === "undefined") return []

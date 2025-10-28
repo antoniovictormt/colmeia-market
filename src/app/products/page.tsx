@@ -1,8 +1,9 @@
 import { Header } from "@/components/Header"
-import { getSessionDataOrLogout } from "@/data/services/getUser"
-import { ProductsContent } from "./_components/content"
 import { getProducts } from "@/data/services/getProducts"
+import { getSessionDataOrLogout } from "@/data/services/getUser"
 import { getTotalQuantity } from "@/functions/getTotalProducts"
+
+import { ProductsContent } from "./_components/content"
 
 export default async function ProductsPage() {
     const session = await getSessionDataOrLogout()

@@ -1,13 +1,12 @@
 "use server"
 
-import { CartItem } from "@/types"
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+
+import { CartItem } from "@/types"
 
 export async function saveProductsToCookies(cart: CartItem[]) {
     const cookieStore = await cookies()
 
-    // Remove o cookie se o carrinho estiver vazio
     if (cart.length === 0) {
         cookieStore.set("colmeia-mkt-products", "", {
             path: "/",
@@ -23,10 +22,6 @@ export async function saveProductsToCookies(cart: CartItem[]) {
         maxAge: 60 * 60 * 24 * 7, // 7 dias
         sameSite: "lax"
     })
-}
-
-function decode(sessionString: string): CartItem {
-    return JSON.parse(sessionString) as CartItem
 }
 
 export async function getProducts(): Promise<CartItem[]> {

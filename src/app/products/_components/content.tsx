@@ -1,13 +1,16 @@
 "use client"
 
+import { ShoppingCart, SlidersHorizontal, Star } from "lucide-react"
 import Image from "next/image"
-
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import {
     Sheet,
     SheetContent,
@@ -16,16 +19,10 @@ import {
     SheetTitle,
     SheetTrigger
 } from "@/components/ui/sheet"
-import { mockedProducts } from "@/data/products"
-
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Product } from "@/types"
-
-import { ShoppingCart, Star, SlidersHorizontal } from "lucide-react"
+import { mockedProducts } from "@/data/products"
 import { addProduct } from "@/functions/addProduct"
+import { Product } from "@/types"
 
 export function ProductsContent() {
     const searchParams = useSearchParams()
@@ -65,7 +62,7 @@ export function ProductsContent() {
             await addProduct([{ product, quantity: 1 }])
             toast.success(`${product.name} foi adicionado ao carrinho!`)
         } catch (error) {
-            console.error(error)
+            alert(error)
             toast.error("Não foi possível adicionar o produto ao carrinho.")
         }
     }

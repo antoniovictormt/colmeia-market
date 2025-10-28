@@ -1,5 +1,8 @@
+import { Lock } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { ReactNode, useEffect } from "react"
-import { useAuth } from "@/contexts/AuthContext"
+
+import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
@@ -7,9 +10,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Lock } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface ProtectedRouteProps {
     children: ReactNode
@@ -23,7 +24,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         if (!isAuthenticated) {
             push("/auth")
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, push])
 
     if (!isAuthenticated) {
         return (

@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { CreditCard, FileText, Minus, Plus, QrCode, Trash2 } from "lucide-react"
 import Image from "next/image"
-import { z } from "zod"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { toast } from "sonner"
+import { z } from "zod"
 
+import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
@@ -13,15 +15,14 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
-import { CreditCard, QrCode, FileText, Trash2, Plus, Minus } from "lucide-react"
-import { CheckoutContentProps, Product } from "@/types"
-import { getTotalPrice } from "@/functions/getTotalPrice"
-import { removeProduct } from "@/functions/removeProduct"
-import { reduceProduct } from "@/functions/reduceProduct"
 import { addProduct } from "@/functions/addProduct"
+import { getTotalPrice } from "@/functions/getTotalPrice"
+import { reduceProduct } from "@/functions/reduceProduct"
+import { removeProduct } from "@/functions/removeProduct"
+import { CheckoutContentProps, Product } from "@/types"
+
 import { CreditCardForm } from "./form/credit-card"
 import { PaymentOption } from "./payment-option"
 

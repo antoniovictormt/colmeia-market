@@ -14,7 +14,6 @@ export function CreditCardForm({
     cardCvv,
     setCardCvv,
     formatCardNumber,
-    formatExpiry,
     products
 }: CreditCardFormProps) {
     function handleExpiryChange(e: React.ChangeEvent<HTMLInputElement>) {

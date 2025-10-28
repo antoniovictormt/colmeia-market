@@ -1,4 +1,5 @@
 import { PaymentMethod } from "@/types"
+
 import PaymentProcessingContent from "./_components/content"
 
 export default async function PaymentProcessingPage({

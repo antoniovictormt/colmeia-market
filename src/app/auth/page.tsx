@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import { ShoppingBag } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
+import z from "zod"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
     Card,
     CardContent,
@@ -14,11 +14,12 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { loginSchema, registerSchema } from "./schema"
+
 import { loginAction, registerAction } from "./action"
-import z from "zod"
+import { loginSchema, registerSchema } from "./schema"
 
 export default function AuthPage() {
     const router = useRouter()

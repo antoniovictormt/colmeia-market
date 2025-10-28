@@ -1,7 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { AlertCircle, CheckCircle, Clock, Copy, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { QRCodeSVG } from "qrcode.react"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+
+import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
@@ -9,12 +14,9 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { QRCodeSVG } from "qrcode.react"
-import { Copy, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react"
-import { toast } from "sonner"
 import { PaymentProcessingContentProps, PaymentStatus } from "@/types"
+
 import { clearCart } from "./action"
 
 export default function PaymentProcessingContent({

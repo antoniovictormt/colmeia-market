@@ -1,9 +1,10 @@
 import { Header } from "@/components/Header"
-import { getSessionDataOrLogout } from "@/data/services/getUser"
 import { getProducts } from "@/data/services/getProducts"
+import { getSessionDataOrLogout } from "@/data/services/getUser"
 import { getTotalQuantity } from "@/functions/getTotalProducts"
-import OrderConfirmationContent from "./_components/content"
 import { PaymentMethod, PaymentStatus } from "@/types"
+
+import OrderConfirmationContent from "./_components/content"
 
 export default async function OrderConfirmationPage({
     searchParams

@@ -1,4 +1,5 @@
 import { CartItem } from "@/types"
+
 import { getTotalPrice } from "./getTotalPrice"
 
 export function getInstallments(cart: CartItem[], maxInstallments = 12) {

@@ -1,7 +1,7 @@
 "use server"
 
+import { getProducts, saveProductsToCookies } from "@/data/services/getProducts"
 import { CartItem } from "@/types"
-import { saveProductsToCookies, getProducts } from "@/data/services/getProducts"
 
 export async function reduceProduct(itemsToReduce: CartItem[]) {
     const existing = await getProducts()

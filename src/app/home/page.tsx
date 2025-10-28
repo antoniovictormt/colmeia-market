@@ -1,21 +1,21 @@
 "use client"
 
+import {
+    CreditCard,
+    Package,
+    Shield,
+    ShoppingCart,
+    Star,
+    TrendingUp
+} from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
+import { Header } from "@/components/Header"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-    ShoppingCart,
-    Package,
-    CreditCard,
-    Shield,
-    TrendingUp,
-    Star
-} from "lucide-react"
-import { Header } from "@/components/Header"
 import { mockedProducts } from "@/data/products"
-import { useRouter } from "next/navigation"
 
 export default function HomePage() {
     const router = useRouter()
