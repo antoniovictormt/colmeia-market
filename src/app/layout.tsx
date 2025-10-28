@@ -3,8 +3,8 @@ import "@/styles/globals.css"
 import { ReactNode } from "react"
 
 export const metadata = {
-    title: "Mock Checkout Flow",
-    description: "Checkout flow mock built with Next.js, Tailwind and Shadcn UI"
+    title: "Colemia Market",
+    description: "Your place to buy everything"
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
