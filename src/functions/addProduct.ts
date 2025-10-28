@@ -3,7 +3,7 @@
 import { CartItem } from "@/types"
 import { saveProductsToCookies, getProducts } from "@/data/services/getProducts"
 
-export async function addToCartServer(newItems: CartItem[]) {
+export async function addProduct(newItems: CartItem[]) {
     const existing = await getProducts()
     const currentCart: CartItem[] = Array.isArray(existing) ? existing : []
 

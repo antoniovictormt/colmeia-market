@@ -1,3 +1,5 @@
+"use client"
+
 import { CreditCard } from "lucide-react"
 
 interface CreditCardPreviewProps {
@@ -48,11 +50,11 @@ const CardBrandLogo = ({ brand }: { brand: string }) => {
     }
 }
 
-export const CreditCardPreview = ({
+export function CreditCardPreview({
     cardNumber,
     cardName,
     cardExpiry
-}: CreditCardPreviewProps) => {
+}: CreditCardPreviewProps) {
     const formatCardNumber = (number: string) => {
         const cleaned = number.replace(/\s/g, "")
         const formatted = cleaned.match(/.{1,4}/g)?.join(" ") || ""
@@ -67,25 +69,27 @@ export const CreditCardPreview = ({
         return "Cartão"
     }
 
+    const brand = getCardBrand(cardNumber)
+
     return (
         <div className="relative mx-auto w-full max-w-sm">
-            <div className="flex aspect-[1.586/1] flex-col justify-between overflow-hidden rounded-xl from-slate-800 via-slate-900 to-slate-950 p-4 shadow-2xl sm:rounded-2xl sm:p-6">
-                {/* Background Pattern */}
+            <div className="relative aspect-[1.586/1] overflow-hidden rounded-xl bg-linear-to-br from-slate-800 via-slate-900 to-slate-950 p-6 shadow-2xl sm:rounded-2xl sm:p-8">
+                {/* Fundo decorativo */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 right-0 h-48 w-48 translate-x-24 -translate-y-24 rounded-full bg-white blur-3xl sm:h-64 sm:w-64 sm:translate-x-32 sm:-translate-y-32" />
                     <div className="absolute bottom-0 left-0 h-36 w-36 -translate-x-18 translate-y-18 rounded-full bg-white blur-3xl sm:h-48 sm:w-48 sm:-translate-x-24 sm:translate-y-24" />
                 </div>
 
-                {/* Card Content */}
-                <div className="relative z-10">
+                {/* Conteúdo */}
+                <div className="relative z-10 flex h-full flex-col justify-between">
+                    {/* Topo */}
                     <div className="mb-6 flex items-start justify-between sm:mb-8">
-                        <div className="flex items-center gap-2">
-                            <div className="h-7 w-10 rounded from-amber-400 to-amber-600 opacity-80 sm:h-8 sm:w-12" />
-                        </div>
-                        <CardBrandLogo brand={getCardBrand(cardNumber)} />
+                        <div className="h-7 w-10 rounded bg-linear-to-br from-amber-400 to-amber-600 opacity-80 sm:h-8 sm:w-12" />
+                        <CardBrandLogo brand={brand} />
                     </div>
 
-                    <div className="space-y-3 sm:space-y-4">
+                    {/* Número, nome e validade */}
+                    <div className="space-y-4">
                         <div className="font-mono text-base tracking-wider text-white sm:text-lg">
                             {formatCardNumber(cardNumber) ||
                                 "•••• •••• •••• ••••"}
@@ -113,9 +117,9 @@ export const CreditCardPreview = ({
                     </div>
                 </div>
 
-                {/* Card Icon */}
-                <div className="absolute right-3 bottom-3 opacity-10 sm:right-4 sm:bottom-4">
-                    <CreditCard className="h-16 w-16 text-white sm:h-24 sm:w-24" />
+                {/* Ícone do cartão */}
+                <div className="absolute right-4 bottom-4 opacity-10 sm:right-5 sm:bottom-5">
+                    <CreditCard className="h-20 w-20 text-white sm:h-24 sm:w-24" />
                 </div>
             </div>
         </div>

@@ -14,13 +14,16 @@ import {
     CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { RadioGroup } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { CreditCard, QrCode, FileText, Trash2, Plus, Minus } from "lucide-react"
-import { CreditCardPreview } from "@/components/CreditCardPreview"
-import { useCart } from "@/data/services/cart"
+import { CheckoutContentProps, Product } from "@/types"
+import { getTotalPrice } from "@/functions/getTotalPrice"
+import { removeProduct } from "@/functions/removeProduct"
+import { reduceProduct } from "@/functions/reduceProduct"
+import { addProduct } from "@/functions/addProduct"
+import { CreditCardForm } from "./form/credit-card"
+import { PaymentOption } from "./payment-option"
 
 type PaymentMethod = "pix" | "credit-card" | "boleto"
 
@@ -44,10 +47,8 @@ const creditCardSchema = z.object({
         .regex(/^\d{3,4}$/, "CVV deve ter 3 ou 4 dígitos")
 })
 
-export function CheckoutContent() {
+export function CheckoutContent({ products }: CheckoutContentProps) {
     const router = useRouter()
-    const { items, total, updateQuantity, removeFromCart, clearCart } =
-        useCart()
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix")
     const [isProcessing, setIsProcessing] = useState(false)
     const [cardNumber, setCardNumber] = useState("")
@@ -66,6 +67,11 @@ export function CheckoutContent() {
             ? cleaned.slice(0, 2) + "/" + cleaned.slice(2, 4)
             : cleaned
     }
+
+    const total = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(Number(getTotalPrice(products)))
 
     const handleCheckout = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -87,7 +93,6 @@ export function CheckoutContent() {
 
         setTimeout(() => {
             const orderId = `ORD-${Date.now()}`
-            clearCart()
 
             router.push(
                 `/payment-processing?orderId=${orderId}&amount=${total}&method=${paymentMethod}`
@@ -97,7 +102,19 @@ export function CheckoutContent() {
         }, 1200)
     }
 
-    if (items.length === 0) {
+    async function removeProductAction(product: Product) {
+        await removeProduct([{ product, quantity: 1 }])
+    }
+
+    async function reduceProductAction(product: Product) {
+        await reduceProduct([{ product, quantity: 1 }])
+    }
+
+    async function addProductAction(product: Product) {
+        await addProduct([{ product, quantity: 1 }])
+    }
+
+    if (products.length === 0) {
         return (
             <div className="bg-background flex min-h-screen items-center justify-center p-4">
                 <Card className="w-full max-w-md text-center">
@@ -138,7 +155,7 @@ export function CheckoutContent() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3 sm:space-y-4">
-                            {items.map(item => (
+                            {products.map(item => (
                                 <div
                                     key={item.product.id}
                                     className="flex flex-col gap-3 border-b pb-3 last:border-0 last:pb-0 sm:flex-row sm:gap-4 sm:pb-4"
@@ -179,9 +196,8 @@ export function CheckoutContent() {
                                                     size="icon"
                                                     className="h-7 w-7 sm:h-8 sm:w-8"
                                                     onClick={() =>
-                                                        updateQuantity(
-                                                            item.product.id,
-                                                            item.quantity - 1
+                                                        reduceProductAction(
+                                                            item.product
                                                         )
                                                     }
                                                 >
@@ -195,9 +211,8 @@ export function CheckoutContent() {
                                                     size="icon"
                                                     className="h-7 w-7 sm:h-8 sm:w-8"
                                                     onClick={() =>
-                                                        updateQuantity(
-                                                            item.product.id,
-                                                            item.quantity + 1
+                                                        addProductAction(
+                                                            item.product
                                                         )
                                                     }
                                                 >
@@ -208,8 +223,8 @@ export function CheckoutContent() {
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() =>
-                                                    removeFromCart(
-                                                        item.product.id
+                                                    removeProductAction(
+                                                        item.product
                                                     )
                                                 }
                                             >
@@ -280,7 +295,7 @@ export function CheckoutContent() {
                                     setCardExpiry={setCardExpiry}
                                     cardCvv={cardCvv}
                                     setCardCvv={setCardCvv}
-                                    total={total}
+                                    products={products}
                                     formatCardNumber={formatCardNumber}
                                     formatExpiry={formatExpiry}
                                 />
@@ -303,7 +318,7 @@ export function CheckoutContent() {
                                     <span className="text-muted-foreground">
                                         Subtotal
                                     </span>
-                                    <span>R$ {total.toFixed(2)}</span>
+                                    <span>{total}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">
@@ -317,7 +332,7 @@ export function CheckoutContent() {
                                 <div className="flex justify-between text-base font-bold sm:text-lg">
                                     <span>Total</span>
                                     <span className="text-primary">
-                                        R$ {total.toFixed(2)}
+                                        {total}
                                     </span>
                                 </div>
                             </div>
@@ -342,154 +357,5 @@ export function CheckoutContent() {
                 </div>
             </div>
         </main>
-    )
-}
-
-// 🔹 Subcomponentes auxiliares
-function PaymentOption({
-    id,
-    value,
-    icon,
-    title,
-    description
-}: {
-    id: string
-    value: string
-    icon: React.ReactNode
-    title: string
-    description: string
-}) {
-    return (
-        <div className="hover:bg-muted/50 flex cursor-pointer items-center space-x-2 rounded-lg border p-3 sm:p-4">
-            <RadioGroupItem value={value} id={id} />
-            <Label
-                htmlFor={id}
-                className="flex flex-1 cursor-pointer items-center gap-2 sm:gap-3"
-            >
-                {icon}
-                <div>
-                    <div className="text-sm font-semibold sm:text-base">
-                        {title}
-                    </div>
-                    <div className="text-muted-foreground text-xs sm:text-sm">
-                        {description}
-                    </div>
-                </div>
-            </Label>
-        </div>
-    )
-}
-
-function CreditCardForm({
-    cardNumber,
-    setCardNumber,
-    cardName,
-    setCardName,
-    cardExpiry,
-    setCardExpiry,
-    cardCvv,
-    setCardCvv,
-    total,
-    formatCardNumber,
-    formatExpiry
-}: any) {
-    return (
-        <div className="mt-4 space-y-4 sm:mt-6 sm:space-y-6">
-            <CreditCardPreview
-                cardNumber={cardNumber}
-                cardName={cardName}
-                cardExpiry={cardExpiry}
-            />
-
-            <div className="space-y-2">
-                <Label htmlFor="card-number" className="text-sm">
-                    Número do Cartão
-                </Label>
-                <Input
-                    id="card-number"
-                    placeholder="0000 0000 0000 0000"
-                    className="text-sm sm:text-base"
-                    maxLength={19}
-                    value={cardNumber}
-                    onChange={e =>
-                        setCardNumber(formatCardNumber(e.target.value))
-                    }
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="card-name" className="text-sm">
-                    Nome no Cartão
-                </Label>
-                <Input
-                    id="card-name"
-                    placeholder="Nome como está no cartão"
-                    className="text-sm uppercase sm:text-base"
-                    value={cardName}
-                    onChange={e => setCardName(e.target.value.toUpperCase())}
-                />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="card-expiry" className="text-sm">
-                        Validade
-                    </Label>
-                    <Input
-                        id="card-expiry"
-                        placeholder="MM/AA"
-                        className="text-sm sm:text-base"
-                        maxLength={5}
-                        value={cardExpiry}
-                        onChange={e =>
-                            setCardExpiry(formatExpiry(e.target.value))
-                        }
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="card-cvv" className="text-sm">
-                        CVV
-                    </Label>
-                    <Input
-                        id="card-cvv"
-                        type="password"
-                        placeholder="123"
-                        className="text-sm sm:text-base"
-                        maxLength={4}
-                        value={cardCvv}
-                        onChange={e =>
-                            setCardCvv(e.target.value.replace(/\D/g, ""))
-                        }
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="card-installments" className="text-sm">
-                    Parcelas
-                </Label>
-                <select
-                    id="card-installments"
-                    className="border-input bg-background flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                >
-                    <option value="1">
-                        1x de R$ {total.toFixed(2)} sem juros
-                    </option>
-                    <option value="2">
-                        2x de R$ {(total / 2).toFixed(2)} sem juros
-                    </option>
-                    <option value="3">
-                        3x de R$ {(total / 3).toFixed(2)} sem juros
-                    </option>
-                    <option value="6">
-                        6x de R$ {(total / 6).toFixed(2)} sem juros
-                    </option>
-                    <option value="12">
-                        12x de R$ {(total / 12).toFixed(2)} sem juros
-                    </option>
-                </select>
-            </div>
-        </div>
     )
 }

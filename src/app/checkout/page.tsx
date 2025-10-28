@@ -13,7 +13,7 @@ export default async function CheckoutPage() {
         <div className="bg-background min-h-screen">
             <Header email={session.email} name={session.name} count={count} />
 
-            <CheckoutContent />
+            <CheckoutContent products={products} />
         </div>
     )
 }

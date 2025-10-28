@@ -25,7 +25,7 @@ import { Slider } from "@/components/ui/slider"
 import { Product } from "@/types"
 
 import { ShoppingCart, Star, SlidersHorizontal } from "lucide-react"
-import { addToCartServer } from "./action"
+import { addProduct } from "@/functions/addProduct"
 
 export function ProductsContent() {
     const searchParams = useSearchParams()
@@ -62,7 +62,7 @@ export function ProductsContent() {
 
     async function handleAddToCart(product: Product) {
         try {
-            await addToCartServer([{ product, quantity: 1 }])
+            await addProduct([{ product, quantity: 1 }])
             toast.success(`${product.name} foi adicionado ao carrinho!`)
         } catch (error) {
             console.error(error)

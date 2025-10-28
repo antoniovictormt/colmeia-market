@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react"
+
 export interface User {
     id: string
     name: string
@@ -35,4 +37,30 @@ export type SessionData = {
 
 export type HeaderProps = SessionData & {
     count: number
+}
+
+export type CheckoutContentProps = {
+    products: CartItem[]
+}
+
+export type PaymentOptionProps = {
+    id: string
+    value: string
+    icon: React.ReactNode
+    title: string
+    description: string
+}
+
+export interface CreditCardFormProps {
+    cardNumber: string
+    setCardNumber: Dispatch<SetStateAction<string>>
+    cardName: string
+    setCardName: Dispatch<SetStateAction<string>>
+    cardExpiry: string
+    setCardExpiry: Dispatch<SetStateAction<string>>
+    cardCvv: string
+    setCardCvv: Dispatch<SetStateAction<string>>
+    formatCardNumber: (value: string) => string
+    formatExpiry: (value: string) => string
+    products: CartItem[]
 }
