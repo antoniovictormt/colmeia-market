@@ -19,10 +19,16 @@ jobs:
                   cache: "pnpm"
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
+
+            - name: Format
+              run: pnpm run check-format
 
             - name: Linting
-              run: pnpm lint
+              run: pnpm run lint
+
+            - name: Build
+              run: pnpm run build
 
             - name: Typecheck
               run: pnpm typecheck
