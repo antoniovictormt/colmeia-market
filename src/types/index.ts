@@ -64,3 +64,27 @@ export interface CreditCardFormProps {
     formatExpiry: (value: string) => string
     products: CartItem[]
 }
+
+export type PaymentStatus =
+    | "initial"
+    | "processing"
+    | "paid"
+    | "failed"
+    | "expired"
+    | "pending"
+export type PaymentMethod = "pix" | "credit-card" | "boleto"
+
+export interface PaymentData {
+    orderId: string
+    amount: number
+    method: PaymentMethod
+}
+
+export type OrderConfirmationPageProps = {
+    status: PaymentStatus
+    method: PaymentMethod
+}
+
+export type PaymentProcessingContentProps = Omit<PaymentData, "amount"> & {
+    amount: string
+}
