@@ -61,6 +61,7 @@ export interface CreditCardFormProps {
     cardCvv: string
     setCardCvv: Dispatch<SetStateAction<string>>
     formatCardNumber: (value: string) => string
+    formatExpiry?: (value: string) => string
     products: CartItem[]
 }
 
