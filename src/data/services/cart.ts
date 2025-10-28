@@ -1,54 +1,108 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { CartItem, Product } from "@/types"
+import { useState, useEffect, useCallback } from "react"
 
-interface Product {
-    id: string
-    name: string
-    price: number
+function getCartFromCookies(): CartItem[] {
+    if (typeof document === "undefined") return []
+    const cookie = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("cart="))
+        ?.split("=")[1]
+    if (!cookie) return []
+    try {
+        return JSON.parse(decodeURIComponent(cookie))
+    } catch {
+        return []
+    }
 }
 
-interface CartItem {
-    product: Product
-    quantity: number
+function saveCartToCookies(cart: CartItem[]) {
+    if (typeof document === "undefined") return
+    document.cookie = `cart=${encodeURIComponent(JSON.stringify(cart))}; path=/; max-age=${
+        60 * 60 * 24 * 7
+    }`
 }
 
 export function useCart() {
     const [items, setItems] = useState<CartItem[]>([])
+    const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        const stored = localStorage.getItem("cart")
-        if (stored) setItems(JSON.parse(stored))
+        const cart = getCartFromCookies()
+        setItems(cart)
+        setInitialized(true)
     }, [])
 
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(items))
-    }, [items])
+        if (!initialized) return
+        saveCartToCookies(items)
+    }, [items, initialized])
 
-    const addToCart = (product: Product) => {
+    const addToCart = useCallback((product: Product, quantity = 1) => {
+        let updatedCart: CartItem[] = []
+
         setItems(prev => {
             const existing = prev.find(i => i.product.id === product.id)
             if (existing) {
-                return prev.map(i =>
+                updatedCart = prev.map(i =>
                     i.product.id === product.id
-                        ? { ...i, quantity: i.quantity + 1 }
+                        ? { ...i, quantity: i.quantity + quantity }
                         : i
                 )
+            } else {
+                updatedCart = [...prev, { product, quantity }]
             }
-            return [...prev, { product, quantity: 1 }]
+            return updatedCart
         })
-    }
 
-    const removeFromCart = (productId: string) =>
+        const newCount = updatedCart.reduce((acc, i) => acc + i.quantity, 0)
+        return newCount
+    }, [])
+
+    const removeFromCart = useCallback((productId: string) => {
         setItems(prev => prev.filter(i => i.product.id !== productId))
+    }, [])
 
-    const clearCart = () => setItems([])
+    const updateQuantity = useCallback(
+        (productId: string, quantity: number) => {
+            setItems(prev =>
+                prev
+                    .map(i =>
+                        i.product.id === productId
+                            ? { ...i, quantity: Math.max(quantity, 1) }
+                            : i
+                    )
+                    .filter(i => i.quantity > 0)
+            )
+        },
+        []
+    )
+
+    const clearCart = useCallback(() => {
+        setItems([])
+        saveCartToCookies([])
+    }, [])
 
     const total = items.reduce(
-        (sum, i) => sum + i.product.price * i.quantity,
+        (acc, item) => acc + item.product.price * item.quantity,
         0
     )
-    const count = items.reduce((sum, i) => sum + i.quantity, 0)
+    const count = items.reduce((acc, item) => acc + item.quantity, 0)
 
-    return { items, addToCart, removeFromCart, clearCart, total, count }
+    // 🧩 Atualiza sempre que o count mudar
+
+    useEffect(() => {
+        if (!initialized) return
+    }, [count, initialized])
+
+    return {
+        items,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        total,
+        count
+    }
 }

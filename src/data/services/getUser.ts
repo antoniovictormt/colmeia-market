@@ -1,7 +1,20 @@
-import { cookies } from "next/headers"
+"use server"
 
-export async function getUser() {
+import { SessionData } from "@/types"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
+
+function decode(sessionString: string): SessionData {
+    return JSON.parse(sessionString) as SessionData
+}
+
+export async function getSessionDataOrLogout(): Promise<SessionData> {
     const cookiesStore = await cookies()
-    const cookie = cookiesStore.get("user")?.value
-    return cookie ? JSON.parse(cookie) : null
+    const sessionCookie = cookiesStore.get("colmeia-mkt-user")
+    if (!sessionCookie) {
+        redirect("/logout")
+    }
+    const session = decode(sessionCookie.value)
+
+    return session
 }

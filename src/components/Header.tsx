@@ -1,6 +1,6 @@
-import { ShoppingCart, Search, User, Menu, Moon, Sun } from "lucide-react"
-import { useCart } from "@/contexts/CartContext"
-import { useAuth } from "@/contexts/AuthContext"
+"use client"
+
+import { ShoppingCart, Search, User, Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -10,22 +10,27 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { useState } from "react"
-import { useTheme } from "next-themes"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { useTheme } from "next-themes"
+import { useState } from "react"
+import { HeaderProps } from "@/types"
 
-export const Header = () => {
-    const { itemCount } = useCart()
-    const { user, isAuthenticated, logout } = useAuth()
-    const { push } = useRouter()
-    const [searchQuery, setSearchQuery] = useState("")
+export const Header = ({ email, name, count }: HeaderProps) => {
+    const router = useRouter()
     const { theme, setTheme } = useTheme()
+    const [searchQuery, setSearchQuery] = useState("")
+
+    const isAuthenticated = !!email
+
+    const handleLogout = async () => {
+        router.push("/logout")
+    }
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
         if (searchQuery.trim()) {
-            push(`/products?search=${encodeURIComponent(searchQuery)}`)
+            router.push(`/products?search=${encodeURIComponent(searchQuery)}`)
         }
     }
 
@@ -91,28 +96,34 @@ export const Header = () => {
                                     <>
                                         <DropdownMenuItem disabled>
                                             <span className="font-medium">
-                                                {user?.name}
+                                                {name}
                                             </span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => push("/products")}
+                                            onClick={() =>
+                                                router.push("/products")
+                                            }
                                         >
                                             Meus Pedidos
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={logout}>
+                                        <DropdownMenuItem
+                                            onClick={handleLogout}
+                                        >
                                             Sair
                                         </DropdownMenuItem>
                                     </>
                                 ) : (
                                     <>
                                         <DropdownMenuItem
-                                            onClick={() => push("/auth")}
+                                            onClick={() => router.push("/auth")}
                                         >
                                             Entrar
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() =>
-                                                push("/auth?register=true")
+                                                router.push(
+                                                    "/auth?register=true"
+                                                )
                                             }
                                         >
                                             Criar conta
@@ -127,15 +138,15 @@ export const Header = () => {
                             variant="ghost"
                             size="icon"
                             className="relative"
-                            onClick={() => push("/checkout")}
+                            onClick={() => router.push("/checkout")}
                         >
                             <ShoppingCart className="h-5 w-5" />
-                            {itemCount > 0 && (
+                            {count > 0 && (
                                 <Badge
                                     variant="destructive"
                                     className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center p-0 text-xs"
                                 >
-                                    {itemCount}
+                                    {count}
                                 </Badge>
                             )}
                         </Button>
@@ -144,36 +155,25 @@ export const Header = () => {
 
                 {/* Categories Nav - Mobile Hidden */}
                 <nav className="hidden gap-6 border-t py-3 text-sm md:flex">
-                    <Link
-                        href="/products"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Todos os Produtos
-                    </Link>
-                    <Link
-                        href="/products?category=Eletrônicos"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Eletrônicos
-                    </Link>
-                    <Link
-                        href="/products?category=Moda"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Moda
-                    </Link>
-                    <Link
-                        href="/products?category=Casa"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Casa
-                    </Link>
-                    <Link
-                        href="/products?category=Acessórios"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Acessórios
-                    </Link>
+                    {[
+                        "Todos os Produtos",
+                        "Eletrônicos",
+                        "Moda",
+                        "Casa",
+                        "Acessórios"
+                    ].map(cat => (
+                        <Link
+                            key={cat}
+                            href={
+                                cat === "Todos os Produtos"
+                                    ? "/products"
+                                    : `/products?category=${cat}`
+                            }
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            {cat}
+                        </Link>
+                    ))}
                 </nav>
             </div>
         </header>
